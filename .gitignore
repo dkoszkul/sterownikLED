@@ -69,3 +69,14 @@ $RECYCLE.BIN/
 *.msi
 *.msm
 *.msp
+.cproject
+*.project
+*.eep
+*.elf
+*.hex
+*.map
+*.lss
+*.d
+Release/makefile
+*.mk
+*.prefs
