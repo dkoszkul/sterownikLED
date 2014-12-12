@@ -8,9 +8,8 @@
 #include "SterownikLED.h"
 
 SterownikLED::SterownikLED() {
-	zolte=0;
-	czerwone=0;
-	czas_zmiany_na_biale=0;
+	poprzednia_wartosc = -1;
+	ilosc_niezmiennych_wartosci = 0;
 
 }
 
@@ -53,11 +52,12 @@ void SterownikLED::ustawRejestryTimer0() {
 	TIMSK |= (1 << TOIE0);          //Przerwanie overflow (przepe³nienie timera)
 }
 
-void SterownikLED::pokazRGB(volatile uint8_t & R,volatile uint8_t & G,volatile uint8_t & B) {
-	uint8_t i=0;
-	R=0;
-	G=0;
-	B=0;
+void SterownikLED::pokazRGB(volatile uint8_t & R, volatile uint8_t & G,
+		volatile uint8_t & B) {
+	uint8_t i = 0;
+	R = 0;
+	G = 0;
+	B = 0;
 	for (i = 0; i < MAX; i++) {
 		R = i;
 		_delay_ms(5);
@@ -115,7 +115,6 @@ void SterownikLED::pokazRGB(volatile uint8_t & R,volatile uint8_t & G,volatile u
 		_delay_ms(5);
 	}
 
-
 	for (i = 0; i < MAX; i++) {
 		R = i;
 		G = i;
@@ -141,36 +140,66 @@ void SterownikLED::pokazRGB(volatile uint8_t & R,volatile uint8_t & G,volatile u
 
 	for (i = 0; i < MAX; i++) {
 		R = i;
-		G = 100-i;
+		G = 100 - i;
 		_delay_ms(5);
 	}
 	for (i = MAX; i > 0; i--) {
-		B=100-i;
+		B = 100 - i;
 		_delay_ms(5);
 	}
 
 }
 
-uint16_t SterownikLED::getCzasZmianyNaBiale() const {
-	return czas_zmiany_na_biale;
+void SterownikLED::ustawSwiatlo(volatile uint8_t &odleglosc,
+		volatile uint8_t & R, volatile uint8_t & G, volatile uint8_t & B) {
+	uint8_t pochodna;
+	if (poprzednia_wartosc == -1)
+		poprzednia_wartosc = odleglosc; /* pierwszy przebieg */
+	else {
+
+		pochodna = poprzednia_wartosc - odleglosc; /* je¿eli >0 obiekt zbli¿a siê do czujnika */
+
+		if (odleglosc > granica_zielone && pochodna > 0) { /* Warunki w przypadku zbli¿ania siê do œciany  */
+			R = G = B = 0;
+		} else if (odleglosc <= granica_zielone && odleglosc > granica_zolte
+				&& pochodna > 0) {
+			R = B = 0;
+			G = MAX;
+		} else if (odleglosc <= granica_zolte && odleglosc > granica_czerwone
+				&& pochodna > 0) {
+			R = G = MAX;
+			B = 0;
+		} else if (odleglosc <= granica_czerwone && pochodna > 0) {
+			B = G = 0;
+			R = MAX;
+		}
+
+		else if (pochodna < 0 && odleglosc <= (granica_czerwone + histereza)) {
+			B = G = 0;
+			R = MAX;
+		}
+		else if(pochodna < 0 && odleglosc > (granica_czerwone + histereza) && odleglosc <= (granica_zolte + histereza)){
+			R = G = MAX;
+			B = 0;
+		}
+		else if(pochodna < 0 && odleglosc > (granica_zolte + histereza) && odleglosc <= (granica_zielone + histereza)){
+			R = B = 0;
+			G = MAX;
+		}
+		else if (pochodna < 0 && odleglosc > (granica_zielone + histereza) ){
+			R = G = B = 0;
+		}
+		else if(pochodna == 0 && ilosc_niezmiennych_wartosci<22){
+			ilosc_niezmiennych_wartosci++;
+		}
+	}
+
+	if(pochodna !=0){
+		ilosc_niezmiennych_wartosci=0;
+	}
+	if(ilosc_niezmiennych_wartosci>20){
+		R = G = B = 255;
+	}
+
 }
 
-void SterownikLED::setCzasZmianyNaBiale(uint16_t czasZmianyNaBiale) {
-	this->czas_zmiany_na_biale = czasZmianyNaBiale;
-}
-
-uint16_t SterownikLED::getCzerwone() const {
-	return czerwone;
-}
-
-void SterownikLED::setCzerwone(uint16_t czerwone) {
-	this->czerwone = czerwone;
-}
-
-uint16_t SterownikLED::getZolte() const {
-	return zolte;
-}
-
-void SterownikLED::setZolte(uint16_t zolte) {
-	this->zolte = zolte;
-}

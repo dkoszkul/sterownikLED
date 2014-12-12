@@ -51,3 +51,6 @@ void HCS04::pomiar() {
 	GICR &= ~(1 << INT1);
 }
 
+
+
+

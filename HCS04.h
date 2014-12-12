@@ -33,6 +33,7 @@ public:
 	int pomiarOdleglosci();
 	void InitInterrupt();
 	void pomiar();
+
 };
 
 #endif /* HCS04_H_ */

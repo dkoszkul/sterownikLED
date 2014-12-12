@@ -72,21 +72,11 @@ int main(void) {
 
 	while (true) {
 		hcs04.pomiar();
-		if(odl0<50) {
-			wypelnienie_R=250;
-			wypelnienie_G=0;
-		}
-		else if(odl0>=50 && odl0<100){
-			wypelnienie_G=250;
-			wypelnienie_R=0;
-		}
-		else{
-			wypelnienie_R=0;
-			wypelnienie_G=0;
-		}
+		sterownikLED.ustawSwiatlo(odl0,wypelnienie_R,wypelnienie_G,wypelnienie_B);
 
 		//sprintf(wynik,"%d [cm]",odl0);
 		//send_uart_text(wynik);
+		_delay_ms(100);
 
 	}
 

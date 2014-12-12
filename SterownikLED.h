@@ -19,9 +19,16 @@
 
 class SterownikLED {
 private:
-	uint16_t zolte;
-	uint16_t czerwone;
-	uint16_t czas_zmiany_na_biale;
+	static const uint8_t granica_czerwone=10;
+	static const uint8_t granica_zolte=40;
+	static const uint8_t granica_zielone=200;
+	static const uint8_t czas_zmiany_na_biale=0;
+	static const uint8_t histereza=5;
+
+
+	uint8_t poprzednia_wartosc;
+	uint8_t ilosc_niezmiennych_wartosci;
+
 
 public:
 	SterownikLED();
@@ -38,13 +45,8 @@ public:
 	void resetGreen();
 
 	void pokazRGB(volatile uint8_t & R,volatile uint8_t & G,volatile uint8_t & B);
+	void ustawSwiatlo(volatile uint8_t &odleglosc,volatile uint8_t & R,volatile uint8_t & G,volatile uint8_t & B);
 
-	uint16_t getCzasZmianyNaBiale() const;
-	void setCzasZmianyNaBiale(uint16_t czasZmianyNaBiale);
-	uint16_t getCzerwone() const;
-	void setCzerwone(uint16_t czerwone);
-	uint16_t getZolte() const;
-	void setZolte(uint16_t zolte);
 };
 
 
