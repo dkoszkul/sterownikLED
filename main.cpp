@@ -21,12 +21,17 @@ volatile uint8_t flaga = 0;
 volatile uint8_t odl0 = 0;
 volatile double licznik = 0;
 
-
+void _delay_ms_var(uint8_t a)
+{
+  while(a--)
+  {
+    _delay_ms(1);
+  }
+}
 
 int main(void) {
 
 	char wynik[] = "           "; //bufor tekstowy, wyczyszczenie bufora
-	int pochodna;
 
 	SterownikLED sterownikLED;
 	HCS04 hcs04;
@@ -44,11 +49,11 @@ int main(void) {
 
 	while (true) {
 		hcs04.pomiar();
-		pochodna = sterownikLED.ustawSwiatlo();
+		sterownikLED.ustawSwiatlo();
 
-		sprintf(wynik, " %d--%d ", pochodna, odl0);
+		sprintf(wynik, " %d ",odl0);
 		uart.send_uart_text(wynik);
-		_delay_ms(100);
+		_delay_ms_var(sterownikLED.getCzasPomiedzyPomiarami());
 
 	}
 

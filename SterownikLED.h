@@ -12,19 +12,20 @@
 #define LED_G PC2
 #define LED_B PC0
 #define MAX 255
+#define WAIT_TIME 1000
+#define WORK_TIME 100
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <util/delay.h>
 
-
 class SterownikLED {
 private:
-	static const uint8_t granica_czerwone=10;
-	static const uint8_t granica_zolte=40;
-	static const uint8_t granica_zielone=200;
-	static const uint8_t czas_zmiany_na_biale=0;
-	static const uint8_t histereza=5;
+	static const uint8_t granica_czerwone = 10;
+	static const uint8_t granica_zolte = 40;
+	static const uint8_t granica_zielone = 200;
+	static const uint8_t czas_zmiany_na_biale = 0;
+	static const uint8_t histereza = 5;
 
 	uint8_t poprzednia_wartosc;
 	uint8_t ilosc_niezmiennych_wartosci;
@@ -34,7 +35,9 @@ private:
 	volatile uint8_t *reference_B;
 	volatile uint8_t *reference_odl;
 
+	uint8_t mode; /* 0 - wait, 1 - wjazd, 2 - wyjazd  */
 
+	uint8_t czas_pomiedzy_pomiarami;
 
 public:
 	SterownikLED();
@@ -43,17 +46,17 @@ public:
 	void ustawRejestryDDRC();
 	void ustawRejestryTimer0();
 
-	void setReferences(volatile uint8_t & R,volatile uint8_t & G,volatile uint8_t & B,volatile uint8_t & odl);
+	void setReferences(volatile uint8_t & R, volatile uint8_t & G, volatile uint8_t & B, volatile uint8_t & odl);
 
-	void pokaz_swiatel_RGB(volatile uint8_t & R,volatile uint8_t & G,volatile uint8_t & B);
-	int ustawSwiatlo();
-
+	void pokaz_swiatel_RGB(volatile uint8_t & R, volatile uint8_t & G, volatile uint8_t & B);
+	void ustawSwiatlo();
 	void ustawRGB(uint8_t red, uint8_t green, uint8_t blue);
+
+	void mode_wjazdDoGarazu();
+
+	/* getters & setters */
+	uint8_t getCzasPomiedzyPomiarami() const;
+	void setCzasPomiedzyPomiarami(uint8_t czasPomiedzyPomiarami);
 };
-
-
-
-
-
 
 #endif /* STEROWNIKLED_H_ */
