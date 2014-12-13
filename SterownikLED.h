@@ -17,6 +17,7 @@
 #include <avr/interrupt.h>
 #include <util/delay.h>
 
+
 class SterownikLED {
 private:
 	static const uint8_t granica_czerwone=10;
@@ -45,9 +46,12 @@ public:
 	void resetGreen();
 
 	void pokazRGB(volatile uint8_t & R,volatile uint8_t & G,volatile uint8_t & B);
-	void ustawSwiatlo(volatile uint8_t &odleglosc,volatile uint8_t & R,volatile uint8_t & G,volatile uint8_t & B);
+	int ustawSwiatlo(volatile uint8_t odleglosc,volatile uint8_t & R,volatile uint8_t & G,volatile uint8_t & B);
 
 };
+
+
+
 
 
 

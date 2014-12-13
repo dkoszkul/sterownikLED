@@ -150,9 +150,9 @@ void SterownikLED::pokazRGB(volatile uint8_t & R, volatile uint8_t & G,
 
 }
 
-void SterownikLED::ustawSwiatlo(volatile uint8_t &odleglosc,
+int SterownikLED::ustawSwiatlo(volatile uint8_t odleglosc,
 		volatile uint8_t & R, volatile uint8_t & G, volatile uint8_t & B) {
-	uint8_t pochodna;
+	int pochodna;
 	if (poprzednia_wartosc == -1)
 		poprzednia_wartosc = odleglosc; /* pierwszy przebieg */
 	else {
@@ -162,44 +162,45 @@ void SterownikLED::ustawSwiatlo(volatile uint8_t &odleglosc,
 		if (odleglosc > granica_zielone && pochodna > 0) { /* Warunki w przypadku zbli¿ania siê do œciany  */
 			R = G = B = 0;
 		} else if (odleglosc <= granica_zielone && odleglosc > granica_zolte
-				&& pochodna > 0) {
+				&& pochodna > 1) {
 			R = B = 0;
 			G = MAX;
 		} else if (odleglosc <= granica_zolte && odleglosc > granica_czerwone
-				&& pochodna > 0) {
+				&& pochodna > 1) {
 			R = G = MAX;
 			B = 0;
-		} else if (odleglosc <= granica_czerwone && pochodna > 0) {
+		} else if (odleglosc <= granica_czerwone && pochodna > 1) {
 			B = G = 0;
 			R = MAX;
 		}
 
-		else if (pochodna < 0 && odleglosc <= (granica_czerwone + histereza)) {
+		else if (pochodna < -1 && odleglosc <= (granica_czerwone + histereza)) {
 			B = G = 0;
 			R = MAX;
 		}
-		else if(pochodna < 0 && odleglosc > (granica_czerwone + histereza) && odleglosc <= (granica_zolte + histereza)){
+		else if(pochodna < -1 && odleglosc > (granica_czerwone + histereza) && odleglosc <= (granica_zolte + histereza)){
 			R = G = MAX;
 			B = 0;
 		}
-		else if(pochodna < 0 && odleglosc > (granica_zolte + histereza) && odleglosc <= (granica_zielone + histereza)){
+		else if(pochodna < -1 && odleglosc > (granica_zolte + histereza) && odleglosc <= (granica_zielone + histereza)){
 			R = B = 0;
 			G = MAX;
 		}
-		else if (pochodna < 0 && odleglosc > (granica_zielone + histereza) ){
+		else if (pochodna < -1 && odleglosc > (granica_zielone + histereza) ){
 			R = G = B = 0;
 		}
-		else if(pochodna == 0 && ilosc_niezmiennych_wartosci<22){
+		else if(pochodna >= -1 && pochodna <=1 && ilosc_niezmiennych_wartosci<22 && odleglosc<= granica_czerwone){
 			ilosc_niezmiennych_wartosci++;
 		}
 	}
 
-	if(pochodna !=0){
+	if(pochodna < -1 && pochodna >1 ){
 		ilosc_niezmiennych_wartosci=0;
 	}
 	if(ilosc_niezmiennych_wartosci>20){
 		R = G = B = 255;
 	}
-
+	poprzednia_wartosc=odleglosc;
+return pochodna;
 }
 
