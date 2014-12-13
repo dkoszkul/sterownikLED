@@ -23,36 +23,26 @@ void SterownikLED::ustawRejestryDDRC() {
 	DDRC |= (1 << PC2);
 }
 
-void SterownikLED::setRed() {
-	PORTC |= (1 << LED_R);
-}
-
-void SterownikLED::setBlue() {
-	PORTC |= (1 << LED_B);
-}
-
-void SterownikLED::setGreen() {
-	PORTC |= (1 << LED_G);
-}
-
-void SterownikLED::resetRed() {
-	PORTC &= (0 << LED_R);
-}
-
-void SterownikLED::resetBlue() {
-	PORTC &= (0 << LED_B);
-}
-
-void SterownikLED::resetGreen() {
-	PORTC &= (0 << LED_G);
-}
 
 void SterownikLED::ustawRejestryTimer0() {
 	TCCR0 |= (1 << CS00); // Ÿród³em CLK, preskaler 1
 	TIMSK |= (1 << TOIE0);          //Przerwanie overflow (przepe³nienie timera)
 }
 
-void SterownikLED::pokazRGB(volatile uint8_t & R, volatile uint8_t & G,
+void SterownikLED::setReferences(volatile uint8_t & R,volatile uint8_t & G,volatile uint8_t & B){
+reference_R = &R;
+reference_G = &G;
+reference_B = &B;
+
+}
+
+void SterownikLED::ustawRGB(volatile uint8_t red,volatile uint8_t green, volatile uint8_t blue){
+	*reference_R=red;
+	*reference_G=green;
+	*reference_B=blue;
+}
+
+void SterownikLED::pokaz_swiatel_RGB(volatile uint8_t & R, volatile uint8_t & G,
 		volatile uint8_t & B) {
 	uint8_t i = 0;
 	R = 0;
@@ -160,20 +150,16 @@ int SterownikLED::ustawSwiatlo(volatile uint8_t odleglosc,
 		pochodna = poprzednia_wartosc - odleglosc; /* je¿eli >0 obiekt zbli¿a siê do czujnika */
 
 		if (odleglosc > granica_zielone && pochodna > 0) { /* Warunki w przypadku zbli¿ania siê do œciany  */
-			R = G = B = 0;
+			ustawRGB(0,0,0);
 		} else if (odleglosc <= granica_zielone && odleglosc > granica_zolte
 				&& pochodna > 1) {
-			R = B = 0;
-			G = MAX;
+			ustawRGB(0,MAX,0);
 		} else if (odleglosc <= granica_zolte && odleglosc > granica_czerwone
 				&& pochodna > 1) {
-			R = G = MAX;
-			B = 0;
+			ustawRGB(MAX,MAX,0);
 		} else if (odleglosc <= granica_czerwone && pochodna > 1) {
-			B = G = 0;
-			R = MAX;
+			ustawRGB(MAX,0,0);
 		}
-
 		else if (pochodna < -1 && odleglosc <= (granica_czerwone + histereza)) {
 			B = G = 0;
 			R = MAX;
@@ -203,4 +189,6 @@ int SterownikLED::ustawSwiatlo(volatile uint8_t odleglosc,
 	poprzednia_wartosc=odleglosc;
 return pochodna;
 }
+
+
 

@@ -26,9 +26,13 @@ private:
 	static const uint8_t czas_zmiany_na_biale=0;
 	static const uint8_t histereza=5;
 
-
 	uint8_t poprzednia_wartosc;
 	uint8_t ilosc_niezmiennych_wartosci;
+
+	volatile uint8_t *reference_R;
+	volatile uint8_t *reference_G;
+	volatile uint8_t *reference_B;
+
 
 
 public:
@@ -38,16 +42,12 @@ public:
 	void ustawRejestryDDRC();
 	void ustawRejestryTimer0();
 
-	void setRed();
-	void setBlue();
-	void setGreen();
-	void resetRed();
-	void resetBlue();
-	void resetGreen();
+	void setReferences(volatile uint8_t & R,volatile uint8_t & G,volatile uint8_t & B);
 
-	void pokazRGB(volatile uint8_t & R,volatile uint8_t & G,volatile uint8_t & B);
+	void pokaz_swiatel_RGB(volatile uint8_t & R,volatile uint8_t & G,volatile uint8_t & B);
 	int ustawSwiatlo(volatile uint8_t odleglosc,volatile uint8_t & R,volatile uint8_t & G,volatile uint8_t & B);
 
+	void ustawRGB(uint8_t red, uint8_t green, uint8_t blue);
 };
 
 

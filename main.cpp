@@ -7,6 +7,7 @@
 
 #include "SterownikLED.h"
 #include "HCS04.h"
+#include "Uart.h"
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <util/delay.h>
@@ -23,62 +24,32 @@ volatile uint8_t odleglosc;
 volatile uint8_t flaga = 0;
 volatile uint8_t odl0 = 0;
 volatile double licznik = 0;
-static void uart_9600(void) {
-#define BAUD 9600
-#include <util/setbaud.h>
-	UBRRH = UBRRH_VALUE;
-	UBRRL = UBRRL_VALUE;
-#if USE_2X
-	UCSRA |= (1 << U2X);
-#else
-	UCSRA &= ~(1 << U2X);
-#endif
-}
 
-static void uart_init(void) {
-	uart_9600();
-	UCSRC = _BV(URSEL) | (1 << UCSZ0) | (1 << UCSZ1) | _BV(USBS); //2 bity stopu ; 8 bitów informacji
-	UCSRB = _BV(TXEN) | _BV(RXEN) | _BV(RXCIE); // uruchomienie TX,RX i przerwania w RX
-}
 
-uint8_t rec_uart(void) {
-	while (!(UCSRA & _BV(RXC)))
-		;
-	return UDR;
-}
-
-void send_uart(char byte) {
-	while (!(UCSRA & _BV(UDRE)))
-		;
-	UDR = byte;
-}
-
-void send_uart_text(char str[]) {
-	unsigned char i = 0;
-	for (i = 0; str[i] != '\0'; i++)
-		send_uart(str[i]);
-}
 
 int main(void) {
 	char wynik[] = "           "; //bufor tekstowy, wyczyszczenie bufora
 	int pochodna;
+
 	SterownikLED sterownikLED;
 	HCS04 hcs04;
+	Uart uart;
+
 	sterownikLED.ustawRejestryDDRC();
 	sterownikLED.ustawRejestryTimer0();
+	sterownikLED.setReferences(wypelnienie_R, wypelnienie_G, wypelnienie_B);
 
 	hcs04.InitInterrupt();
 
-	uart_init();
+	uart.uart_init();
 	sei();
-
 	while (true) {
 		hcs04.pomiar();
-		pochodna = sterownikLED.ustawSwiatlo(odl0, wypelnienie_R,
-				wypelnienie_G, wypelnienie_B);
+		pochodna = sterownikLED.ustawSwiatlo(odl0, wypelnienie_R, wypelnienie_G,
+				wypelnienie_B);
 
-		sprintf(wynik, " %d--%d ", pochodna,odl0);
-		send_uart_text(wynik);
+		sprintf(wynik, " %d--%d ", pochodna, odl0);
+		uart.send_uart_text(wynik);
 		_delay_ms(100);
 
 	}
