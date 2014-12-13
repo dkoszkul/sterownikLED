@@ -16,11 +16,7 @@
 volatile uint8_t wypelnienie_R;
 volatile uint8_t wypelnienie_G;
 volatile uint8_t wypelnienie_B;
-
 volatile uint8_t aktualna_wartosc;
-
-volatile uint8_t odleglosc;
-
 volatile uint8_t flaga = 0;
 volatile uint8_t odl0 = 0;
 volatile double licznik = 0;
@@ -28,6 +24,7 @@ volatile double licznik = 0;
 
 
 int main(void) {
+
 	char wynik[] = "           "; //bufor tekstowy, wyczyszczenie bufora
 	int pochodna;
 
@@ -42,11 +39,12 @@ int main(void) {
 	hcs04.InitInterrupt();
 
 	uart.uart_init();
+
 	sei();
+
 	while (true) {
 		hcs04.pomiar();
-		pochodna = sterownikLED.ustawSwiatlo(odl0, wypelnienie_R, wypelnienie_G,
-				wypelnienie_B);
+		pochodna = sterownikLED.ustawSwiatlo(odl0);
 
 		sprintf(wynik, " %d--%d ", pochodna, odl0);
 		uart.send_uart_text(wynik);

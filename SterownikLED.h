@@ -45,7 +45,7 @@ public:
 	void setReferences(volatile uint8_t & R,volatile uint8_t & G,volatile uint8_t & B);
 
 	void pokaz_swiatel_RGB(volatile uint8_t & R,volatile uint8_t & G,volatile uint8_t & B);
-	int ustawSwiatlo(volatile uint8_t odleglosc,volatile uint8_t & R,volatile uint8_t & G,volatile uint8_t & B);
+	int ustawSwiatlo(volatile uint8_t odleglosc);
 
 	void ustawRGB(uint8_t red, uint8_t green, uint8_t blue);
 };

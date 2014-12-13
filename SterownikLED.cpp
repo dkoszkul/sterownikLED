@@ -140,8 +140,7 @@ void SterownikLED::pokaz_swiatel_RGB(volatile uint8_t & R, volatile uint8_t & G,
 
 }
 
-int SterownikLED::ustawSwiatlo(volatile uint8_t odleglosc,
-		volatile uint8_t & R, volatile uint8_t & G, volatile uint8_t & B) {
+int SterownikLED::ustawSwiatlo(volatile uint8_t odleglosc) {
 	int pochodna;
 	if (poprzednia_wartosc == -1)
 		poprzednia_wartosc = odleglosc; /* pierwszy przebieg */
@@ -161,19 +160,16 @@ int SterownikLED::ustawSwiatlo(volatile uint8_t odleglosc,
 			ustawRGB(MAX,0,0);
 		}
 		else if (pochodna < -1 && odleglosc <= (granica_czerwone + histereza)) {
-			B = G = 0;
-			R = MAX;
+			ustawRGB(MAX,0,0);
 		}
 		else if(pochodna < -1 && odleglosc > (granica_czerwone + histereza) && odleglosc <= (granica_zolte + histereza)){
-			R = G = MAX;
-			B = 0;
+			ustawRGB(MAX,MAX,0);
 		}
 		else if(pochodna < -1 && odleglosc > (granica_zolte + histereza) && odleglosc <= (granica_zielone + histereza)){
-			R = B = 0;
-			G = MAX;
+			ustawRGB(0,MAX,0);
 		}
 		else if (pochodna < -1 && odleglosc > (granica_zielone + histereza) ){
-			R = G = B = 0;
+			ustawRGB(0,0,0);
 		}
 		else if(pochodna >= -1 && pochodna <=1 && ilosc_niezmiennych_wartosci<22 && odleglosc<= granica_czerwone){
 			ilosc_niezmiennych_wartosci++;
@@ -184,7 +180,7 @@ int SterownikLED::ustawSwiatlo(volatile uint8_t odleglosc,
 		ilosc_niezmiennych_wartosci=0;
 	}
 	if(ilosc_niezmiennych_wartosci>20){
-		R = G = B = 255;
+		ustawRGB(MAX,MAX,MAX);
 	}
 	poprzednia_wartosc=odleglosc;
 return pochodna;
