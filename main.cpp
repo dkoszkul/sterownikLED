@@ -8,6 +8,7 @@
 #include "SterownikLED.h"
 #include "HCS04.h"
 #include "Uart.h"
+#include "Buzzer.h"
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <util/delay.h>
@@ -20,13 +21,13 @@ volatile uint8_t aktualna_wartosc;
 volatile uint8_t flaga = 0;
 volatile uint8_t odl0 = 0;
 volatile double licznik = 0;
+volatile int licz = 0;
+volatile int buzzer_value = 10;
 
-void _delay_ms_var(uint8_t a)
-{
-  while(a--)
-  {
-    _delay_ms(1);
-  }
+void _delay_ms_var(uint8_t a) {
+	while (a--) {
+		_delay_ms(1);
+	}
 }
 
 int main(void) {
@@ -36,14 +37,14 @@ int main(void) {
 	SterownikLED sterownikLED;
 	HCS04 hcs04;
 	Uart uart;
+	Buzzer buzzer;
 
 	sterownikLED.init();
 	hcs04.init();
 	uart.init();
+	buzzer.init();
 
-	sterownikLED.setReferences(wypelnienie_R, wypelnienie_G, wypelnienie_B,odl0);
-
-
+	sterownikLED.setReferences(wypelnienie_R, wypelnienie_G, wypelnienie_B, odl0);
 
 	sei();
 
@@ -51,10 +52,9 @@ int main(void) {
 		hcs04.pomiar();
 		sterownikLED.ustawSwiatlo();
 
-		sprintf(wynik, " %d ",odl0);
+		sprintf(wynik, " %d ", licz);
 		uart.send_uart_text(wynik);
 		_delay_ms_var(sterownikLED.getCzasPomiedzyPomiarami());
-
 	}
 
 	return 1;
@@ -121,3 +121,15 @@ ISR(TIMER0_OVF_vect) {
 	}
 }
 
+ISR(TIMER1_OVF_vect) {
+	TCNT1 = 3036; // wartoœæ pocz¹tkowa
+	licz++;
+	if (licz > 100) {
+		licz = 0;
+	}
+	if (buzzer_value > licz) {
+		PORTD |= (1 << PD7);
+	} else
+		PORTD &= ~(1 << PD7);
+
+}

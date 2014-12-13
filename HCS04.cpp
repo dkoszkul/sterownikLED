@@ -27,13 +27,13 @@ void HCS04::init() {
 	DDRB |= (1 << PB0); //PB0 -Trig wyjscie ; PD3- echo wejscie
 	DDRD |= ~(1 << PD3);
 
-	MCUCR = (1 << ISC11) | (1 << ISC10); //The rising edge of INT0 generates an interrupt request
+	MCUCR = (1 << ISC11) | (1 << ISC10); //The rising edge of INT1 generates an interrupt request
 
 //TIMER2
 	TCNT2 = 0x00;          //Zerowanie rejestru TCNT2 (Rejestr jednostki zegara)
 
 	TCCR2 = (1 << WGM21) | (1 << CS20); //Ustawia timer2 w tryb CTC bez preskalera
-										//Czestotliwoœæ 16Mhz/1=8MHz
+										//Czestotliwoœæ 16Mhz/1=16MHz
 
 	OCR2 = 0x10;                            //Górna wartoœæ licznika wynosi 16
 											//Przerwania bêd¹ nastêpowaæ co 1us
