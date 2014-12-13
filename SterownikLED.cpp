@@ -29,10 +29,11 @@ void SterownikLED::ustawRejestryTimer0() {
 	TIMSK |= (1 << TOIE0);          //Przerwanie overflow (przepe³nienie timera)
 }
 
-void SterownikLED::setReferences(volatile uint8_t & R,volatile uint8_t & G,volatile uint8_t & B){
+void SterownikLED::setReferences(volatile uint8_t & R,volatile uint8_t & G,volatile uint8_t & B,volatile uint8_t & odl){
 reference_R = &R;
 reference_G = &G;
 reference_B = &B;
+reference_odl = &odl;
 
 }
 
@@ -140,38 +141,38 @@ void SterownikLED::pokaz_swiatel_RGB(volatile uint8_t & R, volatile uint8_t & G,
 
 }
 
-int SterownikLED::ustawSwiatlo(volatile uint8_t odleglosc) {
+int SterownikLED::ustawSwiatlo() {
 	int pochodna;
 	if (poprzednia_wartosc == -1)
-		poprzednia_wartosc = odleglosc; /* pierwszy przebieg */
+		poprzednia_wartosc = *reference_odl; /* pierwszy przebieg */
 	else {
 
-		pochodna = poprzednia_wartosc - odleglosc; /* je¿eli >0 obiekt zbli¿a siê do czujnika */
+		pochodna = poprzednia_wartosc - *reference_odl; /* je¿eli >0 obiekt zbli¿a siê do czujnika */
 
-		if (odleglosc > granica_zielone && pochodna > 0) { /* Warunki w przypadku zbli¿ania siê do œciany  */
+		if (*reference_odl > granica_zielone && pochodna > 0) { /* Warunki w przypadku zbli¿ania siê do œciany  */
 			ustawRGB(0,0,0);
-		} else if (odleglosc <= granica_zielone && odleglosc > granica_zolte
+		} else if (*reference_odl <= granica_zielone && *reference_odl > granica_zolte
 				&& pochodna > 1) {
 			ustawRGB(0,MAX,0);
-		} else if (odleglosc <= granica_zolte && odleglosc > granica_czerwone
+		} else if (*reference_odl <= granica_zolte && *reference_odl > granica_czerwone
 				&& pochodna > 1) {
 			ustawRGB(MAX,MAX,0);
-		} else if (odleglosc <= granica_czerwone && pochodna > 1) {
+		} else if (*reference_odl <= granica_czerwone && pochodna > 1) {
 			ustawRGB(MAX,0,0);
 		}
-		else if (pochodna < -1 && odleglosc <= (granica_czerwone + histereza)) {
+		else if (pochodna < -1 && *reference_odl <= (granica_czerwone + histereza)) {
 			ustawRGB(MAX,0,0);
 		}
-		else if(pochodna < -1 && odleglosc > (granica_czerwone + histereza) && odleglosc <= (granica_zolte + histereza)){
+		else if(pochodna < -1 && *reference_odl > (granica_czerwone + histereza) && *reference_odl <= (granica_zolte + histereza)){
 			ustawRGB(MAX,MAX,0);
 		}
-		else if(pochodna < -1 && odleglosc > (granica_zolte + histereza) && odleglosc <= (granica_zielone + histereza)){
+		else if(pochodna < -1 && *reference_odl > (granica_zolte + histereza) && *reference_odl <= (granica_zielone + histereza)){
 			ustawRGB(0,MAX,0);
 		}
-		else if (pochodna < -1 && odleglosc > (granica_zielone + histereza) ){
+		else if (pochodna < -1 && *reference_odl > (granica_zielone + histereza) ){
 			ustawRGB(0,0,0);
 		}
-		else if(pochodna >= -1 && pochodna <=1 && ilosc_niezmiennych_wartosci<22 && odleglosc<= granica_czerwone){
+		else if(pochodna >= -1 && pochodna <=1 && ilosc_niezmiennych_wartosci<22 && *reference_odl<= granica_czerwone){
 			ilosc_niezmiennych_wartosci++;
 		}
 	}
@@ -182,7 +183,7 @@ int SterownikLED::ustawSwiatlo(volatile uint8_t odleglosc) {
 	if(ilosc_niezmiennych_wartosci>20){
 		ustawRGB(MAX,MAX,MAX);
 	}
-	poprzednia_wartosc=odleglosc;
+	poprzednia_wartosc=*reference_odl;
 return pochodna;
 }
 

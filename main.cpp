@@ -34,7 +34,7 @@ int main(void) {
 
 	sterownikLED.ustawRejestryDDRC();
 	sterownikLED.ustawRejestryTimer0();
-	sterownikLED.setReferences(wypelnienie_R, wypelnienie_G, wypelnienie_B);
+	sterownikLED.setReferences(wypelnienie_R, wypelnienie_G, wypelnienie_B,odl0);
 
 	hcs04.InitInterrupt();
 
@@ -44,7 +44,7 @@ int main(void) {
 
 	while (true) {
 		hcs04.pomiar();
-		pochodna = sterownikLED.ustawSwiatlo(odl0);
+		pochodna = sterownikLED.ustawSwiatlo();
 
 		sprintf(wynik, " %d--%d ", pochodna, odl0);
 		uart.send_uart_text(wynik);

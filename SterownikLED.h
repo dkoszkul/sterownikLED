@@ -32,6 +32,7 @@ private:
 	volatile uint8_t *reference_R;
 	volatile uint8_t *reference_G;
 	volatile uint8_t *reference_B;
+	volatile uint8_t *reference_odl;
 
 
 
@@ -42,10 +43,10 @@ public:
 	void ustawRejestryDDRC();
 	void ustawRejestryTimer0();
 
-	void setReferences(volatile uint8_t & R,volatile uint8_t & G,volatile uint8_t & B);
+	void setReferences(volatile uint8_t & R,volatile uint8_t & G,volatile uint8_t & B,volatile uint8_t & odl);
 
 	void pokaz_swiatel_RGB(volatile uint8_t & R,volatile uint8_t & G,volatile uint8_t & B);
-	int ustawSwiatlo(volatile uint8_t odleglosc);
+	int ustawSwiatlo();
 
 	void ustawRGB(uint8_t red, uint8_t green, uint8_t blue);
 };
