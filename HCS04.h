@@ -31,7 +31,7 @@ public:
 		return nrPortu;
 	}
 	int pomiarOdleglosci();
-	void InitInterrupt();
+	void init();
 	void pomiar();
 
 };

@@ -19,6 +19,11 @@ SterownikLED::~SterownikLED() {
 	// TODO Auto-generated destructor stub
 }
 
+void SterownikLED::init(){
+	ustawRejestryDDRC();
+	ustawRejestryTimer0();
+}
+
 void SterownikLED::ustawRejestryDDRC() {
 	DDRC |= (1 << PC0);
 	DDRC |= (1 << PC1);

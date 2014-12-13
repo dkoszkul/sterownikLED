@@ -30,7 +30,7 @@ public:
 	#endif
 	}
 
-	static void uart_init() {
+	static void init() {
 		uart_9600();
 		UCSRC = _BV(URSEL) | (1 << UCSZ0) | (1 << UCSZ1) | _BV(USBS); //2 bity stopu ; 8 bitów informacji
 		UCSRB = _BV(TXEN) | _BV(RXEN) | _BV(RXCIE); // uruchomienie TX,RX i przerwania w RX

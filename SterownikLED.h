@@ -39,13 +39,14 @@ private:
 
 	uint8_t czas_pomiedzy_pomiarami;
 
+	void ustawRejestryDDRC();
+	void ustawRejestryTimer0();
+
 public:
 	SterownikLED();
 	~SterownikLED();
 
-	void ustawRejestryDDRC();
-	void ustawRejestryTimer0();
-
+	void init();
 	void setReferences(volatile uint8_t & R, volatile uint8_t & G, volatile uint8_t & B, volatile uint8_t & odl);
 
 	void pokaz_swiatel_RGB(volatile uint8_t & R, volatile uint8_t & G, volatile uint8_t & B);

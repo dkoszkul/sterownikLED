@@ -21,7 +21,7 @@ int HCS04::pomiarOdleglosci() {
 	return zmierzonaOdleglosc;
 }
 
-void HCS04::InitInterrupt() {
+void HCS04::init() {
 //PRZERWANIA ZEWNÊTRZNE
 
 	DDRB |= (1 << PB0); //PB0 -Trig wyjscie ; PD3- echo wejscie

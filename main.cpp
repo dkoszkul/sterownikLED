@@ -37,13 +37,13 @@ int main(void) {
 	HCS04 hcs04;
 	Uart uart;
 
-	sterownikLED.ustawRejestryDDRC();
-	sterownikLED.ustawRejestryTimer0();
+	sterownikLED.init();
+	hcs04.init();
+	uart.init();
+
 	sterownikLED.setReferences(wypelnienie_R, wypelnienie_G, wypelnienie_B,odl0);
 
-	hcs04.InitInterrupt();
 
-	uart.uart_init();
 
 	sei();
 
