@@ -25,11 +25,6 @@ volatile uint8_t licz = 0;
 volatile uint8_t buzzer_value = 5;
 volatile bool buzzerON = true;
 
-void _delay_ms_var(uint8_t a) {
-	while (a--) {
-		_delay_ms(1);
-	}
-}
 
 int main(void) {
 
@@ -43,20 +38,20 @@ int main(void) {
 	sterownikLED.init();
 	hcs04.init();
 	uart.init();
-	buzzer.init();
+	//buzzer.init();
 
 	sterownikLED.setReferences(wypelnienie_R, wypelnienie_G, wypelnienie_B, odl0);
-	buzzer.setReferences(buzzer_value,odl0,buzzerON);
+	//buzzer.setReferences(buzzer_value,odl0,buzzerON);
 
 	sei();
 
 	while (true) {
 		hcs04.pomiar();
 		sterownikLED.ustawSwiatlo();
-		buzzer.ustawBuzzer(sterownikLED.getIloscNiezmiennychWartosci());
+		//buzzer.ustawBuzzer(sterownikLED.getIloscNiezmiennychWartosci());
 
-		//sprintf(wynik, " %d ", licz);
-		//uart.send_uart_text(wynik);
+		sprintf(wynik, " %d ", odl0);
+		uart.send_uart_text(wynik);
 		_delay_ms_var(sterownikLED.getCzasPomiedzyPomiarami());
 	}
 

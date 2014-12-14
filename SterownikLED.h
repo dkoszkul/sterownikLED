@@ -38,6 +38,7 @@ private:
 	uint8_t mode; /* 0 - wait, 1 - wjazd, 2 - wyjazd  */
 
 	uint8_t czas_pomiedzy_pomiarami;
+	uint8_t odleglosc_czujnika_od_samochodu_podczas_postoju;
 
 	void ustawRejestryDDRC();
 	void ustawRejestryTimer0();
@@ -45,6 +46,7 @@ private:
 
 	void mode_wjazdDoGarazu();
 	void mode_wyjazdZGarazu();
+	void mode_postoj();
 
 public:
 	SterownikLED();
@@ -67,5 +69,7 @@ public:
 		return ilosc_niezmiennych_wartosci;
 	}
 };
+
+void _delay_ms_var(uint32_t a);
 
 #endif /* STEROWNIKLED_H_ */

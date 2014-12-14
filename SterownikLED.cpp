@@ -7,12 +7,19 @@
 
 #include "SterownikLED.h"
 
+void _delay_ms_var(uint32_t a) {
+	while (a--) {
+		_delay_ms(1);
+	}
+}
+
+
 SterownikLED::SterownikLED() {
 	poprzednia_wartosc = -1;
 	ilosc_niezmiennych_wartosci = 0;
 	mode = 0;
 	czas_pomiedzy_pomiarami = WORK_TIME;
-
+	mode = 1;
 }
 
 SterownikLED::~SterownikLED() {
@@ -151,50 +158,68 @@ void SterownikLED::mode_wjazdDoGarazu() {
 	if (poprzednia_wartosc == -1)
 		poprzednia_wartosc = *reference_odl; /* pierwszy przebieg */
 	else {
-
 		pochodna = poprzednia_wartosc - *reference_odl; /* je¿eli >0 obiekt zbli¿a siê do czujnika */
-
-		if (*reference_odl > granica_zielone && pochodna > 0) { /* Warunki w przypadku zbli¿ania siê do œciany  */
-			ustawRGB(0, 0, 0);
-		} else if (*reference_odl <= granica_zielone && *reference_odl > granica_zolte && pochodna > 1) {
-			ustawRGB(0, MAX, 0);
-		} else if (*reference_odl <= granica_zolte && *reference_odl > granica_czerwone && pochodna > 1) {
-			ustawRGB(MAX, MAX, 0);
-		} else if (*reference_odl <= granica_czerwone && pochodna > 1) {
-			ustawRGB(MAX, 0, 0);
-		} else if (pochodna < -1 && *reference_odl <= (granica_czerwone + histereza)) {
-			ustawRGB(MAX, 0, 0);
-		} else if (pochodna < -1 && *reference_odl > (granica_czerwone + histereza)
-				&& *reference_odl <= (granica_zolte + histereza)) {
-			ustawRGB(MAX, MAX, 0);
-		} else if (pochodna < -1 && *reference_odl > (granica_zolte + histereza)
-				&& *reference_odl <= (granica_zielone + histereza)) {
-			ustawRGB(0, MAX, 0);
-		} else if (pochodna < -1 && *reference_odl > (granica_zielone + histereza)) {
-			ustawRGB(0, 0, 0);
-		} else if (pochodna >= -1 && pochodna <= 1 && ilosc_niezmiennych_wartosci < 22 && *reference_odl <= granica_czerwone) {
-			ilosc_niezmiennych_wartosci++;
-		}
 	}
 
-	if (pochodna < -1 && pochodna > 1) {
+	if (*reference_odl > granica_zielone && pochodna > 0)
+		ustawRGB(0, 0, 0);
+	else if (*reference_odl <= granica_zielone && *reference_odl > granica_zolte && pochodna > 1)
+		ustawRGB(0, MAX, 0);
+	else if (*reference_odl <= granica_zolte && *reference_odl > granica_czerwone && pochodna > 1)
+		ustawRGB(MAX, MAX, 0);
+	else if (*reference_odl <= granica_czerwone)
+		ustawRGB(MAX, 0, 0);
+	else if (pochodna < -1 && *reference_odl <= (granica_czerwone + histereza))
+		ustawRGB(MAX, 0, 0);
+	else if (pochodna < -1 && *reference_odl > (granica_czerwone + histereza) && *reference_odl <= (granica_zolte + histereza))
+		ustawRGB(MAX, MAX, 0);
+	else if (pochodna < -1 && *reference_odl > (granica_zolte + histereza) && *reference_odl <= (granica_zielone + histereza))
+		ustawRGB(0, MAX, 0);
+	else if (pochodna < -1 && *reference_odl > (granica_zielone + histereza))
+		ustawRGB(0, 0, 0);
+
+	if (pochodna >= -1 && pochodna <= 1 && ilosc_niezmiennych_wartosci < 22 && *reference_odl <= granica_czerwone)
+		ilosc_niezmiennych_wartosci++;
+
+	if (pochodna < -1 || pochodna > 1)
 		ilosc_niezmiennych_wartosci = 0;
-	}
+
 	if (ilosc_niezmiennych_wartosci > 20) {
 		ustawRGB(MAX, MAX, MAX);
+		odleglosc_czujnika_od_samochodu_podczas_postoju = *reference_odl;
+		_delay_ms_var(30000); 				//5min
+		mode = 0;
 	}
 	poprzednia_wartosc = *reference_odl;
 
 }
 
 void SterownikLED::mode_wyjazdZGarazu() {
+	ustawRGB(MAX, MAX, MAX);
+	_delay_ms(1000 * 30);						//30sec
+	mode = 0;
+}
 
+void SterownikLED::mode_postoj() {
+	ustawRGB(0, 0, 0);
+	if (odleglosc_czujnika_od_samochodu_podczas_postoju != 0) {
+		if ((*reference_odl - odleglosc_czujnika_od_samochodu_podczas_postoju) > 5) {
+			mode = 2;
+			odleglosc_czujnika_od_samochodu_podczas_postoju = 0;
+			ilosc_niezmiennych_wartosci = 0;
+		}
+	} else {
+		mode = 1;
+	}
 }
 
 void SterownikLED::ustawSwiatlo() {
-	mode = 1;
 	if (mode == 1) {
 		mode_wjazdDoGarazu();
+	} else if (mode == 0) {
+		mode_postoj();
+	} else if (mode == 2) {
+		mode_wyjazdZGarazu();
 	}
 }
 
