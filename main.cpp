@@ -21,8 +21,9 @@ volatile uint8_t aktualna_wartosc;
 volatile uint8_t flaga = 0;
 volatile uint8_t odl0 = 0;
 volatile double licznik = 0;
-volatile int licz = 0;
-volatile int buzzer_value = 10;
+volatile uint8_t licz = 0;
+volatile uint8_t buzzer_value = 5;
+volatile bool buzzerON = true;
 
 void _delay_ms_var(uint8_t a) {
 	while (a--) {
@@ -45,15 +46,17 @@ int main(void) {
 	buzzer.init();
 
 	sterownikLED.setReferences(wypelnienie_R, wypelnienie_G, wypelnienie_B, odl0);
+	buzzer.setReferences(buzzer_value,odl0,buzzerON);
 
 	sei();
 
 	while (true) {
 		hcs04.pomiar();
 		sterownikLED.ustawSwiatlo();
+		buzzer.ustawBuzzer(sterownikLED.getIloscNiezmiennychWartosci());
 
-		sprintf(wynik, " %d ", licz);
-		uart.send_uart_text(wynik);
+		//sprintf(wynik, " %d ", licz);
+		//uart.send_uart_text(wynik);
 		_delay_ms_var(sterownikLED.getCzasPomiedzyPomiarami());
 	}
 
@@ -122,14 +125,18 @@ ISR(TIMER0_OVF_vect) {
 }
 
 ISR(TIMER1_OVF_vect) {
-	TCNT1 = 3036; // wartoœæ pocz¹tkowa
+	TCNT1 = 100; // wartoœæ pocz¹tkowa
 	licz++;
-	if (licz > 100) {
+	if (licz > buzzer_value) {
 		licz = 0;
 	}
-	if (buzzer_value > licz) {
+	if(buzzerON==true){
+	if (licz <2) {
 		PORTD |= (1 << PD7);
-	} else
+	} else if (licz >2)
 		PORTD &= ~(1 << PD7);
-
+	}
+	else{
+		PORTD &= ~(1 << PD7);
+	}
 }

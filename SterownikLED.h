@@ -42,6 +42,10 @@ private:
 	void ustawRejestryDDRC();
 	void ustawRejestryTimer0();
 
+
+	void mode_wjazdDoGarazu();
+	void mode_wyjazdZGarazu();
+
 public:
 	SterownikLED();
 	~SterownikLED();
@@ -53,11 +57,15 @@ public:
 	void ustawSwiatlo();
 	void ustawRGB(uint8_t red, uint8_t green, uint8_t blue);
 
-	void mode_wjazdDoGarazu();
+
 
 	/* getters & setters */
 	uint8_t getCzasPomiedzyPomiarami() const;
 	void setCzasPomiedzyPomiarami(uint8_t czasPomiedzyPomiarami);
+
+	uint8_t getIloscNiezmiennychWartosci() const {
+		return ilosc_niezmiennych_wartosci;
+	}
 };
 
 #endif /* STEROWNIKLED_H_ */

@@ -19,7 +19,7 @@ SterownikLED::~SterownikLED() {
 	// TODO Auto-generated destructor stub
 }
 
-void SterownikLED::init(){
+void SterownikLED::init() {
 	ustawRejestryDDRC();
 	ustawRejestryTimer0();
 }
@@ -184,6 +184,10 @@ void SterownikLED::mode_wjazdDoGarazu() {
 		ustawRGB(MAX, MAX, MAX);
 	}
 	poprzednia_wartosc = *reference_odl;
+
+}
+
+void SterownikLED::mode_wyjazdZGarazu() {
 
 }
 
