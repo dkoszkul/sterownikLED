@@ -17,6 +17,7 @@ private:
 	volatile uint8_t *buzzer_value;
 	volatile uint8_t *reference_odl;
 	volatile bool *buzzerON;
+	uint8_t mode;
 
 public:
 	Buzzer();

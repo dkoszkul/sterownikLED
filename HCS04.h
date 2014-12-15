@@ -12,7 +12,7 @@
 #include <avr/interrupt.h>
 #include <util/delay.h>
 
-
+#define PIN_PD3 (PIND &(1<<PD3))
 
 #define SetBit(reg, bit) ((reg) |= (0x01 << (bit)))            // Ustawienie danego bitu w rejestrze
 #define ClrBit(reg, bit) ((reg) &= ~(0x01 << (bit)))        // Wyzerowanie danego bitu w rejestrze

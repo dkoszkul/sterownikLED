@@ -13,7 +13,6 @@ void _delay_ms_var(uint32_t a) {
 	}
 }
 
-
 SterownikLED::SterownikLED() {
 	poprzednia_wartosc = -1;
 	ilosc_niezmiennych_wartosci = 0;
@@ -57,99 +56,6 @@ void SterownikLED::ustawRGB(volatile uint8_t red, volatile uint8_t green, volati
 }
 
 void SterownikLED::pokaz_swiatel_RGB(volatile uint8_t & R, volatile uint8_t & G, volatile uint8_t & B) {
-	uint8_t i = 0;
-	R = 0;
-	G = 0;
-	B = 0;
-	for (i = 0; i < MAX; i++) {
-		R = i;
-		_delay_ms(5);
-	}
-	for (i = MAX; i > 0; i--) {
-		R = i;
-		_delay_ms(5);
-	}
-	for (i = 0; i < MAX; i++) {
-		G = i;
-		_delay_ms(5);
-	}
-	for (i = MAX; i > 0; i--) {
-		G = i;
-		_delay_ms(5);
-	}
-	for (i = 0; i < MAX; i++) {
-		B = i;
-		_delay_ms(5);
-	}
-	for (i = MAX; i > 0; i--) {
-		B = i;
-		_delay_ms(5);
-	}
-
-	for (i = 0; i < MAX; i++) {
-		B = i;
-		R = i;
-		_delay_ms(5);
-	}
-	for (i = MAX; i > 0; i--) {
-		B = i;
-		R = i;
-		_delay_ms(5);
-	}
-	for (i = 0; i < MAX; i++) {
-		B = i;
-		G = i;
-		_delay_ms(5);
-	}
-	for (i = MAX; i > 0; i--) {
-		B = i;
-		G = i;
-		_delay_ms(5);
-	}
-
-	for (i = 0; i < MAX; i++) {
-		R = i;
-		G = i;
-		_delay_ms(5);
-	}
-	for (i = MAX; i > 0; i--) {
-		R = i;
-		G = i;
-		_delay_ms(5);
-	}
-
-	for (i = 0; i < MAX; i++) {
-		R = i;
-		G = i;
-		B = i;
-		_delay_ms(5);
-	}
-	for (i = MAX; i > 0; i--) {
-		R = i;
-		G = i;
-		B = i;
-		_delay_ms(5);
-	}
-
-	for (i = 0; i < MAX; i++) {
-		R = i;
-		G = i;
-		_delay_ms(5);
-	}
-	for (i = MAX; i > 0; i--) {
-		R = i;
-		_delay_ms(5);
-	}
-
-	for (i = 0; i < MAX; i++) {
-		R = i;
-		G = 100 - i;
-		_delay_ms(5);
-	}
-	for (i = MAX; i > 0; i--) {
-		B = 100 - i;
-		_delay_ms(5);
-	}
 
 }
 
@@ -203,6 +109,7 @@ void SterownikLED::mode_wyjazdZGarazu() {
 void SterownikLED::mode_postoj() {
 	ustawRGB(0, 0, 0);
 	if (odleglosc_czujnika_od_samochodu_podczas_postoju != 0) {
+		this->czas_pomiedzy_pomiarami = WAIT_TIME;
 		if ((*reference_odl - odleglosc_czujnika_od_samochodu_podczas_postoju) > 5) {
 			mode = 2;
 			odleglosc_czujnika_od_samochodu_podczas_postoju = 0;

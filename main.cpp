@@ -46,12 +46,14 @@ int main(void) {
 	sei();
 
 	while (true) {
+		if(!PIN_PD3){
 		hcs04.pomiar();
 		sterownikLED.ustawSwiatlo();
 		//buzzer.ustawBuzzer(sterownikLED.getIloscNiezmiennychWartosci());
 
 		sprintf(wynik, " %d ", odl0);
 		uart.send_uart_text(wynik);
+		}
 		_delay_ms_var(sterownikLED.getCzasPomiedzyPomiarami());
 	}
 

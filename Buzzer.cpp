@@ -8,7 +8,7 @@
 #include "Buzzer.h"
 
 Buzzer::Buzzer() {
-	// TODO Auto-generated constructor stub
+	mode = 0;
 
 }
 
@@ -25,30 +25,34 @@ void Buzzer::init() {
 	DDRD |= (1 << PD7);
 }
 
-void Buzzer::setReferences(volatile uint8_t& buzzer_value, volatile uint8_t & odl,volatile bool & buzzerON) {
-	this->buzzer_value=&buzzer_value;
-	this->reference_odl=&odl;
-	this->buzzerON=&buzzerON;
+void Buzzer::setReferences(volatile uint8_t& buzzer_value, volatile uint8_t & odl, volatile bool & buzzerON) {
+	this->buzzer_value = &buzzer_value;
+	this->reference_odl = &odl;
+	this->buzzerON = &buzzerON;
 }
 
 void Buzzer::ustawBuzzer(uint8_t ilosc_niezmiennych_wartosci) {
-	if(*reference_odl>40 && *reference_odl<200){
-		*buzzerON=true;
-		*buzzer_value=16;
+	if (mode == 0) {
+		if( *reference_odl >= 200) *buzzerON = false;
+		else if (*reference_odl > 40 && *reference_odl < 200) {
+			*buzzerON = true;
+			*buzzer_value = 16;
+		} else if (*reference_odl > 20 && *reference_odl <= 40) {
+			*buzzerON = true;
+			*buzzer_value = 8;
+		} else if (*reference_odl > 10 && *reference_odl <= 20) {
+			*buzzerON = true;
+			*buzzer_value = 4;
+		} else if (*reference_odl <= 10) {
+			*buzzerON = true;
+			*buzzer_value = 2;
+		}
+		if (ilosc_niezmiennych_wartosci > 10) {
+			*buzzerON = false;
+			mode = 1;
+		}
+	}else if(mode == 1){
+		if(*reference_odl>=200) mode=0;
 	}
-	else if (*reference_odl>20 && *reference_odl<=40){
-		*buzzerON=true;
-		*buzzer_value=8;
-	}
-	else if (*reference_odl>10 && *reference_odl<=20){
-		*buzzerON=true;
-		*buzzer_value=4;
-	}
-	else if (*reference_odl<=10){
-		*buzzerON=true;
-		*buzzer_value=2;
-	}
-	if(ilosc_niezmiennych_wartosci>20){
-		*buzzerON=false;
-	}
+
 }
